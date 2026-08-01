@@ -17,7 +17,7 @@ import { Menu, X, LayoutDashboard, TrendingUp, TrendingDown, PieChart, Calendar,
 import './index.css';
 
 const MainLayout = () => {
-  const { getTransactions, clearTransactions } = React.useContext(GlobalContext);
+  const { getTransactions, clearTransactions, getBudgets } = React.useContext(GlobalContext);
   const { isAuthenticated, logout, user, loadUser } = React.useContext(AuthContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   
@@ -32,6 +32,7 @@ const MainLayout = () => {
   React.useEffect(() => {
     if (isAuthenticated) {
       getTransactions();
+      getBudgets();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);

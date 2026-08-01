@@ -49,14 +49,8 @@ export const Dashboard = () => {
   // 4. Savings (Income - Expense)
   const savings = (periodIncome - periodExpense).toFixed(2);
 
-  // 5. Budget Progress 
-  const budgetProgressPercent = BUDGET > 0 
-    ? Math.min((periodExpense / BUDGET) * 100, 100).toFixed(1) 
-    : "0.0";
-  let progressColor = 'var(--accent-income)'; // Green
-  if (budgetProgressPercent > 75) progressColor = '#f59e0b'; // Amber
-  if (budgetProgressPercent > 90) progressColor = 'var(--accent-expense)'; // Red
-
+  // 5. Budget Progress is dynamically calculated per category in the JSX
+  
   // 6. Expense Chart (Doughnut based on Categories of Expenses)
   const expensesOnly = filteredTransactions.filter(t => t.type === 'expense');
   const expenseCategories = {};
@@ -165,19 +159,45 @@ export const Dashboard = () => {
       </div>
 
       {/* Budget Progress & Chart Row */}
-      <div className="glass-panel budget-panel">
-        <h4>Budget Progress ({viewMode === 'monthly' ? 'Monthly' : 'Daily'})</h4>
-        <div className="budget-info">
-          <span>₹{periodExpense} spent</span>
-          <span>of ₹{BUDGET.toFixed(0)}</span>
-        </div>
-        <div className="progress-bar-container">
-          <div 
-            className="progress-bar-fill" 
-            style={{ width: `${budgetProgressPercent}%`, backgroundColor: progressColor }}
-          ></div>
-        </div>
-        <p className="progress-text">{budgetProgressPercent}% of {viewMode} budget used</p>
+      <div className="glass-panel budget-panel" style={{ maxHeight: '350px', overflowY: 'auto' }}>
+        <h4>Category Budgets ({viewMode === 'monthly' ? 'Monthly' : 'Daily'})</h4>
+        
+        {budgets && budgets.length > 0 ? budgets.map(budget => {
+          const categoryBudget = viewMode === 'monthly' ? budget.amount : budget.amount / 30;
+          
+          const spent = expensesOnly
+            .filter(t => t.category.toLowerCase() === budget.category.toLowerCase())
+            .reduce((acc, t) => acc + t.amount, 0);
+
+          const isExceeded = spent > categoryBudget;
+          const percentage = categoryBudget > 0 ? Math.min((spent / categoryBudget) * 100, 100) : 0;
+          
+          let color = 'var(--accent-primary)'; 
+          if (percentage > 75) color = '#f59e0b'; // Amber
+          if (percentage > 90) color = 'var(--accent-expense)'; // Red
+
+          return (
+            <div key={budget._id} style={{ marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', fontSize: '0.9rem' }}>
+                <span style={{ textTransform: 'capitalize', fontWeight: '500' }}>{budget.category}</span>
+                <span>₹{spent.toFixed(0)} / ₹{categoryBudget.toFixed(0)}</span>
+              </div>
+              <div className="progress-bar-container" style={{ height: '8px', marginBottom: '0.4rem', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                <div 
+                  className="progress-bar-fill" 
+                  style={{ width: `${percentage}%`, backgroundColor: color, height: '100%', borderRadius: '4px', transition: 'width 0.5s ease' }}
+                ></div>
+              </div>
+              <div style={{ fontSize: '0.75rem', color: isExceeded ? 'var(--accent-expense)' : 'var(--text-secondary)', textAlign: 'right' }}>
+                {isExceeded ? 'Exceeded limit!' : `${percentage.toFixed(1)}% used`}
+              </div>
+            </div>
+          );
+        }) : (
+          <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem 0' }}>
+            No category budgets set.
+          </div>
+        )}
       </div>
 
       <div className="glass-panel chart-panel">
