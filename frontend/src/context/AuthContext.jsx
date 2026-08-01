@@ -23,7 +23,8 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const res = await axios.get('http://localhost:5006/api/auth/me');
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      const res = await axios.get(`${API_URL}/auth/me`);
 
       dispatch({
         type: 'USER_LOADED',
@@ -43,7 +44,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     try {
-      const res = await axios.post('http://localhost:5006/api/auth/register', formData, config);
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      const res = await axios.post(`${API_URL}/auth/register`, formData, config);
 
       setAuthToken(res.data.token);
 
@@ -70,7 +72,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     try {
-      const res = await axios.post('http://localhost:5006/api/auth/login', formData, config);
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      const res = await axios.post(`${API_URL}/auth/login`, formData, config);
 
       setAuthToken(res.data.token);
 

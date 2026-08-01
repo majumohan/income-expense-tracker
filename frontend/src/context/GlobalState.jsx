@@ -20,7 +20,8 @@ export const GlobalProvider = ({ children }) => {
   // Actions
   async function getTransactions() {
     try {
-      const res = await axios.get('http://localhost:5006/api/transactions');
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      const res = await axios.get(`${API_URL}/transactions`);
 
       dispatch({
         type: 'GET_TRANSACTIONS',
@@ -40,7 +41,8 @@ export const GlobalProvider = ({ children }) => {
 
   async function deleteTransaction(id) {
     try {
-      await axios.delete(`http://localhost:5006/api/transactions/${id}`);
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      await axios.delete(`${API_URL}/transactions/${id}`);
 
       dispatch({
         type: 'DELETE_TRANSACTION',
@@ -62,7 +64,8 @@ export const GlobalProvider = ({ children }) => {
     };
 
     try {
-      const res = await axios.post('http://localhost:5006/api/transactions', transaction, config);
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      const res = await axios.post(`${API_URL}/transactions`, transaction, config);
 
       dispatch({
         type: 'ADD_TRANSACTION',
@@ -84,7 +87,8 @@ export const GlobalProvider = ({ children }) => {
     };
 
     try {
-      const res = await axios.put(`http://localhost:5006/api/transactions/${id}`, updatedTransaction, config);
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      const res = await axios.put(`${API_URL}/transactions/${id}`, updatedTransaction, config);
 
       dispatch({
         type: 'EDIT_TRANSACTION',
@@ -101,7 +105,8 @@ export const GlobalProvider = ({ children }) => {
   // Budget Actions
   async function getBudgets() {
     try {
-      const res = await axios.get('http://localhost:5006/api/budgets');
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      const res = await axios.get(`${API_URL}/budgets`);
 
       dispatch({
         type: 'GET_BUDGETS',
@@ -118,7 +123,8 @@ export const GlobalProvider = ({ children }) => {
   async function addBudget(budget) {
     const config = { headers: { 'Content-Type': 'application/json' } };
     try {
-      const res = await axios.post('http://localhost:5006/api/budgets', budget, config);
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      const res = await axios.post(`${API_URL}/budgets`, budget, config);
       dispatch({
         type: 'ADD_BUDGET',
         payload: res.data.data
@@ -133,7 +139,8 @@ export const GlobalProvider = ({ children }) => {
 
   async function deleteBudget(id) {
     try {
-      await axios.delete(`http://localhost:5006/api/budgets/${id}`);
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      await axios.delete(`${API_URL}/budgets/${id}`);
       dispatch({
         type: 'DELETE_BUDGET',
         payload: id
