@@ -20,7 +20,9 @@ export const GlobalProvider = ({ children }) => {
   // Actions
   async function getTransactions() {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      if (API_URL.endsWith('/')) API_URL = API_URL.slice(0, -1);
+      if (!API_URL.endsWith('/api')) API_URL += '/api';
       const res = await axios.get(`${API_URL}/transactions`);
 
       dispatch({
@@ -41,7 +43,9 @@ export const GlobalProvider = ({ children }) => {
 
   async function deleteTransaction(id) {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      if (API_URL.endsWith('/')) API_URL = API_URL.slice(0, -1);
+      if (!API_URL.endsWith('/api')) API_URL += '/api';
       await axios.delete(`${API_URL}/transactions/${id}`);
 
       dispatch({
@@ -64,7 +68,9 @@ export const GlobalProvider = ({ children }) => {
     };
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      if (API_URL.endsWith('/')) API_URL = API_URL.slice(0, -1);
+      if (!API_URL.endsWith('/api')) API_URL += '/api';
       const res = await axios.post(`${API_URL}/transactions`, transaction, config);
 
       dispatch({
@@ -87,7 +93,9 @@ export const GlobalProvider = ({ children }) => {
     };
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      if (API_URL.endsWith('/')) API_URL = API_URL.slice(0, -1);
+      if (!API_URL.endsWith('/api')) API_URL += '/api';
       const res = await axios.put(`${API_URL}/transactions/${id}`, updatedTransaction, config);
 
       dispatch({
@@ -105,7 +113,9 @@ export const GlobalProvider = ({ children }) => {
   // Budget Actions
   async function getBudgets() {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      if (API_URL.endsWith('/')) API_URL = API_URL.slice(0, -1);
+      if (!API_URL.endsWith('/api')) API_URL += '/api';
       const res = await axios.get(`${API_URL}/budgets`);
 
       dispatch({
@@ -123,7 +133,9 @@ export const GlobalProvider = ({ children }) => {
   async function addBudget(budget) {
     const config = { headers: { 'Content-Type': 'application/json' } };
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      if (API_URL.endsWith('/')) API_URL = API_URL.slice(0, -1);
+      if (!API_URL.endsWith('/api')) API_URL += '/api';
       const res = await axios.post(`${API_URL}/budgets`, budget, config);
       dispatch({
         type: 'ADD_BUDGET',
@@ -139,7 +151,9 @@ export const GlobalProvider = ({ children }) => {
 
   async function deleteBudget(id) {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      if (API_URL.endsWith('/')) API_URL = API_URL.slice(0, -1);
+      if (!API_URL.endsWith('/api')) API_URL += '/api';
       await axios.delete(`${API_URL}/budgets/${id}`);
       dispatch({
         type: 'DELETE_BUDGET',

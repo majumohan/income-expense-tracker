@@ -23,7 +23,9 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      if (API_URL.endsWith('/')) API_URL = API_URL.slice(0, -1);
+      if (!API_URL.endsWith('/api')) API_URL += '/api';
       const res = await axios.get(`${API_URL}/auth/me`);
 
       dispatch({
@@ -44,7 +46,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      if (API_URL.endsWith('/')) API_URL = API_URL.slice(0, -1);
+      if (!API_URL.endsWith('/api')) API_URL += '/api';
       const res = await axios.post(`${API_URL}/auth/register`, formData, config);
 
       setAuthToken(res.data.token);
@@ -72,7 +76,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      if (API_URL.endsWith('/')) API_URL = API_URL.slice(0, -1);
+      if (!API_URL.endsWith('/api')) API_URL += '/api';
       const res = await axios.post(`${API_URL}/auth/login`, formData, config);
 
       setAuthToken(res.data.token);
