@@ -38,7 +38,7 @@ export const ExpenseManagement = () => {
           </div>
           <button 
             onClick={() => setShowAddModal(true)}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '8px 16px', background: 'var(--accent-expense)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '500' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '8px 16px', background: 'var(--accent-expense)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '500', whiteSpace: 'nowrap' }}
           >
             <Plus size={18} /> Add Expense
           </button>

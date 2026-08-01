@@ -64,6 +64,7 @@ html {
   height: 100vh;
   overflow-y: auto;
   max-width: 1200px;
+  min-width: 0;
   margin: 0 auto;
 }
 
@@ -468,6 +469,8 @@ h3 {
 @media (max-width: 600px) {
   .main-content {
     padding: 1rem;
+    width: 100%;
+    min-width: 0;
   }
   .brand-text-container {
     font-size: 1.1rem;
@@ -578,6 +581,10 @@ h3 {
   width: 100%;
   max-width: 450px;
   position: relative;
+}
+
+.modal-content h3 {
+  padding-right: 2rem;
 }
 
 .modal-close {
