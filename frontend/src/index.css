@@ -514,6 +514,19 @@ h3 {
   border-bottom: 1px solid var(--card-border);
 }
 
+.data-table th:last-child,
+.data-table td:last-child {
+  position: sticky;
+  right: 0;
+  background: #1e293b; /* Solid color to prevent text overlapping */
+  z-index: 10;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2); /* Shadow to separate from scrolling content */
+}
+
+.data-table th:last-child {
+  z-index: 11;
+}
+
 .data-table th {
   color: var(--text-secondary);
   font-weight: 500;
