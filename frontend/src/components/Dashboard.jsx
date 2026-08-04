@@ -1,16 +1,19 @@
 import React, { useContext, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus as PlusIcon, Minus as MinusIcon } from 'lucide-react';
 import { GlobalContext } from '../context/GlobalState';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { TransactionItem } from './TransactionItem';
-
+import { AddExpenseModal } from './AddExpenseModal';
+import { AddIncomeModal } from './AddIncomeModal';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const Dashboard = () => {
   const { transactions, budgets } = useContext(GlobalContext);
   const [viewMode, setViewMode] = useState('monthly'); // 'daily' or 'monthly'
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showAddIncomeModal, setShowAddIncomeModal] = useState(false);
+  const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
   
   const MONTHLY_BUDGET = budgets ? budgets.reduce((acc, b) => acc + b.amount, 0) : 0; 
   const DAILY_BUDGET = MONTHLY_BUDGET / 30;
@@ -113,6 +116,15 @@ export const Dashboard = () => {
 
   return (
     <div style={{ width: '100%' }}>
+      <div className="mobile-shortcut-container animate-fade-in stagger-1">
+        <button className="mobile-shortcut-btn income" onClick={() => setShowAddIncomeModal(true)}>
+          <PlusIcon size={18} /> Add Income
+        </button>
+        <button className="mobile-shortcut-btn expense" onClick={() => setShowAddExpenseModal(true)}>
+          <MinusIcon size={18} /> Add Expense
+        </button>
+      </div>
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <h3>Dashboard Overview</h3>
@@ -220,6 +232,14 @@ export const Dashboard = () => {
           )}
         </ul>
       </div>
+
+      {showAddIncomeModal && (
+        <AddIncomeModal onClose={() => setShowAddIncomeModal(false)} />
+      )}
+      
+      {showAddExpenseModal && (
+        <AddExpenseModal onClose={() => setShowAddExpenseModal(false)} />
+      )}
 
     </div>
     </div>

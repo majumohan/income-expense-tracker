@@ -10,9 +10,10 @@ import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { DeveloperRegister } from './pages/DeveloperRegister';
 import { Profile } from './pages/Profile';
+import { Blog } from './pages/Blog';
 import { AuthProvider, AuthContext, setAuthToken } from './context/AuthContext';
 import { PrivateRoute } from './components/PrivateRoute';
-import { Menu, X, LayoutDashboard, TrendingUp, TrendingDown, PieChart, Calendar, User, LogOut, LogIn, UserPlus } from 'lucide-react';
+import { Menu, X, LayoutDashboard, TrendingUp, TrendingDown, PieChart, Calendar, User, LogOut, LogIn, UserPlus, BookOpen } from 'lucide-react';
 
 import './index.css';
 
@@ -85,6 +86,9 @@ const MainLayout = () => {
               <Link to="/calendar" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>
                 <Calendar size={20} /> Calendar
               </Link>
+              <Link to="/blog" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>
+                <BookOpen size={20} /> Blog
+              </Link>
               <Link to="/profile" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>
                 <User size={20} /> Profile
               </Link>
@@ -130,6 +134,7 @@ const MainLayout = () => {
           <Route path="/expense" element={<PrivateRoute><ExpenseManagement /></PrivateRoute>} />
           <Route path="/budgets" element={<PrivateRoute><Budgets /></PrivateRoute>} />
           <Route path="/calendar" element={<PrivateRoute><CalendarView /></PrivateRoute>} />
+          <Route path="/blog" element={<PrivateRoute><Blog /></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         </Routes>
       </main>
