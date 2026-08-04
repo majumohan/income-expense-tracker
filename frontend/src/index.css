@@ -482,6 +482,25 @@ h3 {
 /* Data Table */
 .table-container {
   overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+}
+
+.table-container::-webkit-scrollbar-thumb:active {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .data-table {

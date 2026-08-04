@@ -232,6 +232,7 @@ export const Dashboard = () => {
           )}
         </ul>
       </div>
+    </div>
 
       {showAddIncomeModal && (
         <AddIncomeModal onClose={() => setShowAddIncomeModal(false)} />
@@ -241,7 +242,6 @@ export const Dashboard = () => {
         <AddExpenseModal onClose={() => setShowAddExpenseModal(false)} />
       )}
 
-    </div>
     </div>
   );
 };
