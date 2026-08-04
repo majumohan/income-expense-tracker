@@ -512,6 +512,7 @@ h3 {
 .data-table th, .data-table td {
   padding: 12px;
   border-bottom: 1px solid var(--card-border);
+  white-space: nowrap;
 }
 
 .data-table th:last-child,
@@ -858,18 +859,60 @@ h3 {
     padding: 1.25rem;
   }
 
+  .table-container {
+    padding-bottom: 10px;
+  }
+  .table-container::-webkit-scrollbar {
+    display: block;
+  }
+  
   .data-table th, .data-table td {
-    padding: 8px 6px;
-    font-size: 0.8rem;
+    padding: 6px 2px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .data-table td:nth-child(1) {
+    font-size: 0.65rem;
+  }
+
+  .data-table td:nth-child(2) {
+    /* Let the description column wrap tightly to save horizontal space */
+    white-space: normal;
+    min-width: 50px;
+    max-width: 90px;
+    word-wrap: break-word;
+    line-height: 1.2;
+  }
+
+  .data-table th:last-child,
+  .data-table td:last-child {
+    position: sticky;
+    right: 0;
+    background: transparent;
+    z-index: 10;
   }
 
   .badge {
-    padding: 3px 6px;
-    font-size: 0.7rem;
+    padding: 3px 4px;
+    font-size: 0.65rem;
   }
 
-  .action-btn {
-    padding: 4px;
+  .data-table td:last-child {
+    text-align: right;
+    vertical-align: middle;
+  }
+
+  .data-table td:last-child .action-btn {
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+    margin-bottom: 6px;
+    padding: 2px;
+  }
+
+  .data-table td:last-child .action-btn:last-child {
+    margin-bottom: 0;
   }
   
   .chart-container {

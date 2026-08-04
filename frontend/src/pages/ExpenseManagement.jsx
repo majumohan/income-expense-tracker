@@ -70,7 +70,11 @@ export const ExpenseManagement = () => {
                     <button className="action-btn edit" onClick={() => setEditingTransaction(t)}>
                       <Edit2 size={16} />
                     </button>
-                    <button className="action-btn delete" onClick={() => deleteTransaction(t._id)}>
+                    <button className="action-btn delete" onClick={() => {
+                      if (window.confirm("Are you sure you want to delete this expense?")) {
+                        deleteTransaction(t._id);
+                      }
+                    }}>
                       <Trash2 size={16} />
                     </button>
                   </td>

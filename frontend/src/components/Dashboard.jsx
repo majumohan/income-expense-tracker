@@ -1,11 +1,12 @@
 import React, { useContext, useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus as PlusIcon, Minus as MinusIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus as PlusIcon, Minus as MinusIcon, ChevronDown, ChevronUp } from 'lucide-react';
 import { GlobalContext } from '../context/GlobalState';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { TransactionItem } from './TransactionItem';
 import { AddExpenseModal } from './AddExpenseModal';
 import { AddIncomeModal } from './AddIncomeModal';
+import { CategoryExpensesModal } from './CategoryExpensesModal';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const Dashboard = () => {
@@ -14,6 +15,8 @@ export const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false);
   const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showRecentTransactions, setShowRecentTransactions] = useState(false);
   
   const MONTHLY_BUDGET = budgets ? budgets.reduce((acc, b) => acc + b.amount, 0) : 0; 
   const DAILY_BUDGET = MONTHLY_BUDGET / 30;
@@ -80,12 +83,23 @@ export const Dashboard = () => {
     ],
   };
 
+  const handleChartClick = (event, elements) => {
+    if (elements.length > 0) {
+      const index = elements[0].index;
+      const category = chartData.labels[index];
+      if (category && category !== 'No Expenses') {
+        setSelectedCategory(category);
+      }
+    }
+  };
+
   const chartOptions = {
     plugins: {
       legend: { position: 'right', labels: { color: '#f8fafc', font: { size: 10 } } }
     },
     cutout: '70%',
-    maintainAspectRatio: false
+    maintainAspectRatio: false,
+    onClick: handleChartClick,
   };
 
   // 7. Recent Transactions (Top 5 for the selected period, sorted by newest)
@@ -220,17 +234,22 @@ export const Dashboard = () => {
       </div>
 
       {/* Recent Transactions */}
-      <div className="glass-panel transactions-panel">
-        <h4>Recent Transactions</h4>
-        <ul className="list">
-          {recentTransactions.length > 0 ? (
-            recentTransactions.map(transaction => (
-              <TransactionItem key={transaction._id} transaction={transaction} />
-            ))
-          ) : (
-            <p style={{ color: '#94a3b8', textAlign: 'center', marginTop: '1rem' }}>No recent transactions.</p>
-          )}
-        </ul>
+      <div className="glass-panel transactions-panel" style={{ cursor: 'pointer' }} onClick={() => setShowRecentTransactions(!showRecentTransactions)}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h4 style={{ margin: 0 }}>Recent Transactions</h4>
+          {showRecentTransactions ? <ChevronUp size={20} style={{ color: 'var(--text-secondary)' }} /> : <ChevronDown size={20} style={{ color: 'var(--text-secondary)' }} />}
+        </div>
+        {showRecentTransactions && (
+          <ul className="list" style={{ marginTop: '1rem', borderTop: '1px solid var(--card-border)', paddingTop: '1rem' }}>
+            {recentTransactions.length > 0 ? (
+              recentTransactions.map(transaction => (
+                <TransactionItem key={transaction._id} transaction={transaction} />
+              ))
+            ) : (
+              <p style={{ color: '#94a3b8', textAlign: 'center', marginTop: '1rem' }}>No recent transactions.</p>
+            )}
+          </ul>
+        )}
       </div>
     </div>
 
@@ -240,6 +259,14 @@ export const Dashboard = () => {
       
       {showAddExpenseModal && (
         <AddExpenseModal onClose={() => setShowAddExpenseModal(false)} />
+      )}
+
+      {selectedCategory && (
+        <CategoryExpensesModal 
+          category={selectedCategory} 
+          transactions={filteredTransactions} 
+          onClose={() => setSelectedCategory(null)} 
+        />
       )}
 
     </div>
