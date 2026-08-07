@@ -57,6 +57,12 @@ export const Login = ({ isDeveloper = false }) => {
           />
         </div>
 
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+          <Link to="/forgot-password" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textDecoration: 'none', transition: 'color 0.2s' }} onMouseOver={(e) => e.target.style.color = 'var(--accent-primary)'} onMouseOut={(e) => e.target.style.color = 'var(--text-secondary)'}>
+            Forgot Password?
+          </Link>
+        </div>
+
         <button className="btn" type="submit" style={{ marginTop: '1rem' }}>Login</button>
       </form>
       <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>

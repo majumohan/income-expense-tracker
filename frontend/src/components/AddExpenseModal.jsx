@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import ReactDOM from 'react-dom';
 import { GlobalContext } from '../context/GlobalState';
 import { X } from 'lucide-react';
 
@@ -6,6 +7,7 @@ export const AddExpenseModal = ({ onClose }) => {
   const [text, setText] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('Food');
+  const [customCategory, setCustomCategory] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
   const { addTransaction } = useContext(GlobalContext);
@@ -13,11 +15,17 @@ export const AddExpenseModal = ({ onClose }) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
+    const finalCategory = category === 'Custom' ? customCategory : category;
+    if (category === 'Custom' && !customCategory.trim()) {
+      alert("Please enter a custom category name");
+      return;
+    }
+
     const newTransaction = {
       text,
       amount: +amount,
       type: 'expense',
-      category,
+      category: finalCategory,
       date
     };
 
@@ -25,7 +33,7 @@ export const AddExpenseModal = ({ onClose }) => {
     onClose();
   };
 
-  return (
+  return ReactDOM.createPortal(
     <div className="modal-overlay">
       <div className="modal-content glass-panel">
         <button className="modal-close" onClick={onClose}>
@@ -71,6 +79,7 @@ export const AddExpenseModal = ({ onClose }) => {
             <label>Category</label>
             <select value={category} onChange={(e) => setCategory(e.target.value)}>
               <option value="Food">Food</option>
+              <option value="Grocery">Grocery</option>
               <option value="Travel">Travel</option>
               <option value="Shopping">Shopping</option>
               <option value="Medical">Medical</option>
@@ -83,12 +92,27 @@ export const AddExpenseModal = ({ onClose }) => {
               <option value="Mobile Recharge">Mobile Recharge</option>
               <option value="Internet">Internet</option>
               <option value="Others">Others</option>
+              <option value="Custom">Custom</option>
             </select>
           </div>
+          
+          {category === 'Custom' && (
+            <div className="form-control">
+              <label>Custom Category</label>
+              <input 
+                type="text" 
+                value={customCategory} 
+                onChange={(e) => setCustomCategory(e.target.value)} 
+                placeholder="Enter custom category..."
+                required
+              />
+            </div>
+          )}
 
           <button className="btn" type="submit" style={{ backgroundColor: 'var(--accent-expense)' }}>Add Expense</button>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

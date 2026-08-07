@@ -1,9 +1,16 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { User, Mail, Shield } from 'lucide-react';
+import { GlobalContext } from '../context/GlobalState';
+import { User, Mail, Shield, LogOut } from 'lucide-react';
 
 export const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
+  const { clearTransactions } = useContext(GlobalContext);
+
+  const handleLogout = () => {
+    logout();
+    clearTransactions();
+  };
 
   if (!user) return null;
 
@@ -39,6 +46,20 @@ export const Profile = () => {
             </div>
           </div>
         </div>
+      </div>
+      
+      <button 
+        onClick={handleLogout}
+        className="btn animate-fade-in stagger-3" 
+        style={{ marginTop: '2.5rem', backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', transition: 'all 0.3s' }}
+        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.3)'}
+        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.2)'}
+      >
+        <LogOut size={20} /> Sign Out
+      </button>
+      <div className="watermark" style={{marginTop: '1rem', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-secondary)', opacity: 0.6}}>
+        Developed by<br />
+        <span>Wise Automation&Technology</span>
       </div>
     </div>
   );

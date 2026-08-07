@@ -3,10 +3,18 @@ import { GlobalContext } from '../context/GlobalState';
 import { X } from 'lucide-react';
 
 export const EditTransactionModal = ({ transaction, onClose }) => {
+  const predefinedExpenseCategories = ['Food', 'Grocery', 'Travel', 'Shopping', 'Medical', 'Education', 'Entertainment', 'Electricity', 'Fuel', 'Rent', 'Insurance', 'Mobile Recharge', 'Internet', 'Others'];
+  const predefinedIncomeCategories = ['Salary', 'Business', 'Freelancing', 'Bonus', 'Interest'];
+
+  const isCustom = transaction.type === 'expense' 
+    ? !predefinedExpenseCategories.includes(transaction.category)
+    : !predefinedIncomeCategories.includes(transaction.category);
+
   const [text, setText] = useState(transaction.text);
   const [amount, setAmount] = useState(transaction.amount);
   const [type, setType] = useState(transaction.type);
-  const [category, setCategory] = useState(transaction.category);
+  const [category, setCategory] = useState(isCustom ? 'Custom' : transaction.category);
+  const [customCategory, setCustomCategory] = useState(isCustom ? transaction.category : '');
   const [date, setDate] = useState(
     new Date(transaction.date || transaction.createdAt).toISOString().split('T')[0]
   );
@@ -16,11 +24,17 @@ export const EditTransactionModal = ({ transaction, onClose }) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
+    const finalCategory = category === 'Custom' ? customCategory : category;
+    if (category === 'Custom' && !customCategory.trim()) {
+      alert("Please enter a custom category name");
+      return;
+    }
+
     const updatedTransaction = {
       text,
       amount: +amount,
       type,
-      category,
+      category: finalCategory,
       date
     };
 
@@ -85,6 +99,7 @@ export const EditTransactionModal = ({ transaction, onClose }) => {
               {type === 'expense' ? (
                 <>
                   <option value="Food">Food</option>
+                  <option value="Grocery">Grocery</option>
                   <option value="Travel">Travel</option>
                   <option value="Shopping">Shopping</option>
                   <option value="Medical">Medical</option>
@@ -97,6 +112,7 @@ export const EditTransactionModal = ({ transaction, onClose }) => {
                   <option value="Mobile Recharge">Mobile Recharge</option>
                   <option value="Internet">Internet</option>
                   <option value="Others">Others</option>
+                  <option value="Custom">Custom</option>
                 </>
               ) : (
                 <>
@@ -105,10 +121,24 @@ export const EditTransactionModal = ({ transaction, onClose }) => {
                   <option value="Freelancing">Freelancing</option>
                   <option value="Bonus">Bonus</option>
                   <option value="Interest">Interest</option>
+                  <option value="Custom">Custom</option>
                 </>
               )}
             </select>
           </div>
+
+          {category === 'Custom' && (
+            <div className="form-control">
+              <label>Custom Category</label>
+              <input 
+                type="text" 
+                value={customCategory} 
+                onChange={(e) => setCustomCategory(e.target.value)} 
+                placeholder="Enter custom category..."
+                required
+              />
+            </div>
+          )}
 
           <button className="btn" type="submit">Save Changes</button>
         </form>

@@ -100,6 +100,39 @@ export const AuthProvider = ({ children }) => {
   // Logout
   const logout = () => dispatch({ type: 'LOGOUT' });
 
+  // Forgot Password
+  const forgotPassword = async (email) => {
+    const config = { headers: { 'Content-Type': 'application/json' } };
+    try {
+      let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      if (API_URL.endsWith('/')) API_URL = API_URL.slice(0, -1);
+      if (!API_URL.endsWith('/api')) API_URL += '/api';
+      const res = await axios.post(`${API_URL}/auth/forgotpassword`, { email }, config);
+      return { success: true, data: res.data };
+    } catch (err) {
+      return { success: false, error: err.response?.data?.error || 'Email could not be sent' };
+    }
+  };
+
+  // Reset Password
+  const resetPassword = async (token, password) => {
+    const config = { headers: { 'Content-Type': 'application/json' } };
+    try {
+      let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5006/api';
+      if (API_URL.endsWith('/')) API_URL = API_URL.slice(0, -1);
+      if (!API_URL.endsWith('/api')) API_URL += '/api';
+      const res = await axios.put(`${API_URL}/auth/resetpassword/${token}`, { password }, config);
+
+      setAuthToken(res.data.token);
+      dispatch({ type: 'LOGIN_SUCCESS', payload: res.data });
+      loadUser();
+
+      return { success: true, data: res.data };
+    } catch (err) {
+      return { success: false, error: err.response?.data?.error || 'Password reset failed' };
+    }
+  };
+
   // Clear Errors
   const clearErrors = () => dispatch({ type: 'CLEAR_ERRORS' });
 
@@ -114,6 +147,8 @@ export const AuthProvider = ({ children }) => {
         register,
         login,
         logout,
+        forgotPassword,
+        resetPassword,
         loadUser,
         clearErrors
       }}
