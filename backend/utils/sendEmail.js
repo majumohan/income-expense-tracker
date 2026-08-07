@@ -1,24 +1,43 @@
+const axios = require('axios');
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
-  let transporter;
+  // If BREVO_API_KEY is provided in environment variables, use the HTTP API to bypass Render SMTP blocking
+  if (process.env.BREVO_API_KEY) {
+    try {
+      const payload = {
+        sender: {
+          name: process.env.FROM_NAME || 'Income Expense Tracker',
+          email: process.env.FROM_EMAIL || 'noreply@income-expense-tracker.com'
+        },
+        to: [
+          {
+            email: options.email
+          }
+        ],
+        subject: options.subject,
+        htmlContent: options.html || options.message,
+        textContent: options.message
+      };
 
-  if (process.env.SMTP_HOST) {
-    transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_PORT === '465' || process.env.SMTP_PORT == 465, // true for 465, false for other ports
-      auth: {
-        user: process.env.SMTP_EMAIL,
-        pass: process.env.SMTP_PASSWORD
-      }
-    });
+      const response = await axios.post('https://api.brevo.com/v3/smtp/email', payload, {
+        headers: {
+          'api-key': process.env.BREVO_API_KEY,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+
+      console.log('Message sent via Brevo API:', response.data);
+    } catch (error) {
+      console.error('Error sending email via Brevo API:', error.response?.data || error.message);
+      throw error;
+    }
   } else {
-    // Generate test SMTP service account from ethereal.email
-    // Only needed if you don't have a real mail account for testing
+    // Generate test SMTP service account from ethereal.email (Useful for Local Development)
     let testAccount = await nodemailer.createTestAccount();
 
-    transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: "smtp.ethereal.email",
       port: 587,
       secure: false, // true for 465, false for other ports
@@ -28,22 +47,19 @@ const sendEmail = async (options) => {
       },
     });
     
-    console.log("No SMTP details found in .env, using Ethereal test account.");
-  }
+    console.log("No BREVO_API_KEY found in .env, using Ethereal test account.");
 
-  const message = {
-    from: `${process.env.FROM_NAME} <${process.env.FROM_EMAIL}>`,
-    to: options.email,
-    subject: options.subject,
-    text: options.message,
-    html: options.html // Optional: if we want to send HTML emails
-  };
+    const message = {
+      from: `${process.env.FROM_NAME || 'Test'} <${process.env.FROM_EMAIL || 'test@test.com'}>`,
+      to: options.email,
+      subject: options.subject,
+      text: options.message,
+      html: options.html
+    };
 
-  const info = await transporter.sendMail(message);
+    const info = await transporter.sendMail(message);
 
-  console.log('Message sent: %s', info.messageId);
-  
-  if (!process.env.SMTP_HOST) {
+    console.log('Message sent: %s', info.messageId);
     console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
   }
 };
