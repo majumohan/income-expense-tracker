@@ -6,6 +6,4 @@ self.addEventListener('activate', (e) => {
   e.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('fetch', (e) => {
-  // Empty fetch handler to satisfy PWA install prompt requirements
-});
+
