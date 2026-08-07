@@ -22,27 +22,27 @@ export const Profile = () => {
       
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
-          <User size={20} color="var(--accent-primary)" />
-          <div>
+          <User size={20} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
+          <div style={{ minWidth: 0, flex: 1 }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Full Name</div>
-            <div style={{ fontSize: '1.1rem', fontWeight: '500' }}>{user.name}</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: '500', whiteSpace: 'normal', wordBreak: 'break-word' }}>{user.name}</div>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
-          <Mail size={20} color="var(--accent-primary)" />
-          <div>
+          <Mail size={20} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
+          <div style={{ minWidth: 0, flex: 1 }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Email Address</div>
-            <div style={{ fontSize: '1.1rem', fontWeight: '500' }}>{user.email}</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: '500', whiteSpace: 'normal', wordBreak: 'break-all' }}>{user.email}</div>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
-          <Shield size={20} color={user.role === 'developer' ? 'var(--accent-income)' : 'var(--accent-primary)'} />
-          <div>
+          <Shield size={20} color={user.role === 'developer' ? 'var(--accent-income)' : 'var(--accent-primary)'} style={{ flexShrink: 0 }} />
+          <div style={{ minWidth: 0, flex: 1 }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Account Role</div>
-            <div style={{ fontSize: '1.1rem', fontWeight: '500', textTransform: 'capitalize' }}>
-              {user.role} {user.role === 'developer' && <span style={{ fontSize: '0.8rem', background: 'var(--accent-income)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>PRO</span>}
+            <div style={{ fontSize: '1.1rem', fontWeight: '500', textTransform: 'capitalize', whiteSpace: 'normal', wordBreak: 'break-word' }}>
+              {user.role} {user.role === 'developer' && <span style={{ fontSize: '0.8rem', background: 'var(--accent-income)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px', whiteSpace: 'nowrap' }}>PRO</span>}
             </div>
           </div>
         </div>

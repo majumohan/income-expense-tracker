@@ -21,6 +21,7 @@ export const Dashboard = () => {
   const [showRecentTxsModal, setShowRecentTxsModal] = useState(false);
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false);
   const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
+  const [selectedTrendDate, setSelectedTrendDate] = useState(null);
 
   // Calculations
   const amounts = transactions.map(t => t.type === 'income' ? t.amount : -t.amount);
@@ -68,6 +69,11 @@ export const Dashboard = () => {
   const expensesOnly = transactions.filter(t => {
     if (t.type !== 'expense') return false;
     const tDate = new Date(t.date || t.createdAt);
+    
+    if (selectedTrendDate && timeFilter === 'Daily') {
+      return tDate.toDateString() === selectedTrendDate.toDateString();
+    }
+    
     if (timeFilter === 'Daily') {
       return tDate.getDate() === now.getDate() && tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear();
     }
@@ -85,17 +91,20 @@ export const Dashboard = () => {
   });
   
   const expenseCategories = {};
+  let filteredExpensesTotal = 0;
   expensesOnly.forEach(t => {
     expenseCategories[t.category] = (expenseCategories[t.category] || 0) + t.amount;
+    filteredExpensesTotal += t.amount;
   });
 
   const donutColors = ['#F87171', '#FBBF24', '#34D399', '#A78BFA', '#60A5FA'];
+  const hasExpenses = Object.keys(expenseCategories).length > 0;
   
   const donutData = {
-    labels: Object.keys(expenseCategories).length > 0 ? Object.keys(expenseCategories) : ['Food', 'Fuel', 'Bills', 'Shopping', 'Others'],
+    labels: hasExpenses ? Object.keys(expenseCategories) : ['No Expenses'],
     datasets: [{
-      data: Object.keys(expenseCategories).length > 0 ? Object.values(expenseCategories) : [150, 100, 77, 250, 50],
-      backgroundColor: donutColors,
+      data: hasExpenses ? Object.values(expenseCategories) : [1],
+      backgroundColor: hasExpenses ? donutColors : ['rgba(255,255,255,0.1)'],
       borderWidth: 0,
       hoverOffset: 4,
       cutout: '75%',
@@ -103,6 +112,7 @@ export const Dashboard = () => {
   };
 
   const handleDonutClick = (event, elements) => {
+    if (!hasExpenses) return;
     if (elements.length > 0) {
       const index = elements[0].index;
       const clickedCategory = donutData.labels[index];
@@ -175,6 +185,17 @@ export const Dashboard = () => {
     }]
   };
 
+  const handleLineClick = (event, elements) => {
+    if (elements.length > 0) {
+      const index = elements[0].index;
+      if (timeFilter === 'Daily') {
+        const i = 6 - index;
+        const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        setSelectedTrendDate(d);
+      }
+    }
+  };
+
   const lineOptions = {
     plugins: { legend: { display: false } },
     scales: {
@@ -182,6 +203,7 @@ export const Dashboard = () => {
       y: { grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#6b7280', font: { size: 10 }, stepSize: 500, callback: (v) => v === 0 ? '0' : (v/1000) + 'K' } }
     },
     maintainAspectRatio: false,
+    onClick: handleLineClick,
   };
 
   // SVG Sparklines for Summary Cards
@@ -355,7 +377,7 @@ export const Dashboard = () => {
           <button 
             key={filter} 
             className={`time-pill ${timeFilter === filter ? 'active' : ''}`}
-            onClick={() => setTimeFilter(filter)}
+            onClick={() => { setTimeFilter(filter); setSelectedTrendDate(null); }}
           >
             {filter}
           </button>
@@ -400,41 +422,46 @@ export const Dashboard = () => {
         <div className="section-card half-card donut-section">
           <div className="section-header">
             <h3>Expense Breakdown</h3>
-            <span className="section-link pill-btn">{timeFilter === 'Daily' ? 'Today' : `This ${timeFilter.replace('ly', '')}`} v</span>
+            <span className="section-link pill-btn">
+              {timeFilter === 'Daily' ? (selectedTrendDate ? selectedTrendDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : 'Today') : `This ${timeFilter.replace('ly', '')}`} v
+            </span>
           </div>
           <div className="donut-container">
             <div className="donut-wrapper">
               <Doughnut data={donutData} options={donutOptions} />
               <div className="donut-center-text">
-                <span className="dc-amount">₹{expenses.toFixed(0)}</span>
+                <span className="dc-amount">₹{filteredExpensesTotal.toFixed(0)}</span>
                 <span className="dc-label">Total</span>
               </div>
             </div>
             <div className="custom-legend">
-              {donutData.labels.map((cat, i) => {
-                const amount = donutData.datasets[0].data[i];
-                const total = donutData.datasets[0].data.reduce((a,b)=>a+b,0);
-                const pct = ((amount / total) * 100).toFixed(1);
-                const isActive = selectedCategory === cat;
-                return (
-                  <div 
-                    key={cat} 
-                    className="legend-item" 
-                    onClick={() => {
-                      setSelectedCategory(cat);
-                      setShowCategoryModal(true);
-                    }}
-                    style={{ cursor: 'pointer', transition: 'opacity 0.2s' }}
-                  >
-                    <div className="legend-color" style={{backgroundColor: donutColors[i]}}></div>
-                    <span className="legend-label" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{cat}</span>
-                    <span className="legend-value">₹{amount} <span className="legend-pct">({pct}%)</span></span>
-                  </div>
-                )
-              })}
+              {!hasExpenses ? (
+                <div style={{ color: 'var(--text-secondary)', textAlign: 'center', width: '100%', marginTop: '1rem' }}>No expenses found for this period.</div>
+              ) : (
+                donutData.labels.map((cat, i) => {
+                  const amount = donutData.datasets[0].data[i];
+                  const total = donutData.datasets[0].data.reduce((a,b)=>a+b,0);
+                  const pct = ((amount / total) * 100).toFixed(1);
+                  const isActive = selectedCategory === cat;
+                  return (
+                    <div 
+                      key={cat} 
+                      className="legend-item" 
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                        setShowCategoryModal(true);
+                      }}
+                      style={{ cursor: 'pointer', transition: 'opacity 0.2s' }}
+                    >
+                      <div className="legend-color" style={{backgroundColor: donutColors[i % donutColors.length]}}></div>
+                      <span className="legend-label" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{cat}</span>
+                      <span className="legend-value">₹{amount} <span className="legend-pct">({pct}%)</span></span>
+                    </div>
+                  )
+                })
+              )}
             </div>
           </div>
-          <div className="card-footer-link">View Details &gt;</div>
         </div>
 
         <div className="section-card half-card trend-section">
@@ -445,7 +472,6 @@ export const Dashboard = () => {
           <div className="line-chart-container">
              <Line data={lineData} options={lineOptions} />
           </div>
-          <div className="card-footer-link">View Details &gt;</div>
         </div>
       </div>
 
